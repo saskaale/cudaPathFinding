@@ -20,20 +20,27 @@ CFLAGS = $(CFLAGS_DEBUG)
 #  -lm     Math
 #LIBS = -lgomp -lm
 #LIBS = -lboost_mpi -lboost_serialization
-LIBS = -lboost_mpi -lboost_serialization
+LIBS = 
+
 BIN_DIR = bin
+OBJECTSDIR = build
+SRC_DIR = src
+
 
 
 all: dirs simple_fw
 
 remake: clean all
 
-simple_fw: simple_fw.cpp
-		$(CC) -o $(BIN_DIR)/simple_fw ./simple_fw.cpp $(CFLAGS) $(LIBS)
+matrix_tools.o: $(SRC_DIR)/matrix_tools.cpp  $(SRC_DIR)/matrix_tools.h
+		$(CC) -c -o $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/matrix_tools.cpp $(CFLAGS)
+
+simple_fw: matrix_tools.o $(SRC_DIR)/simple_fw.cpp
+		$(CC) -o $(BIN_DIR)/simple_fw $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_fw.cpp $(CFLAGS) $(LIBS)
 
 clean:
-	$(DEL_FILES) bin
+	$(DEL_FILES) $(BIN_DIR) $(OBJECTSDIR)
 
 dirs:
-	@$(MKDIR) -p $(BIN_DIR)
+	@$(MKDIR) -p $(BIN_DIR) $(OBJECTSDIR)
 
