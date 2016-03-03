@@ -19,31 +19,10 @@ int ** mtx;
 
 
 void do_Dijkstra(){
-  //prepare matrix of length
-  for(int i = 0; i < size; i++){
-    for(int j = 0; j < size; j++){
-      if(mtx[i][j] < 0){	//not an edge
-	mtx[i][j] = MAXLEN;
-      }
-    }
-  }
+
+  //TODO DIJKSTRA ALGORITHM
   
-  //length from i to i is 0
-  for(int i = 0; i < size; i++){
-    mtx[i][i] = 0;
-  }
   
-  //Floyd Warshall main loop
-  for(int k = 0; k < size; k++){
-    for(int i = 0; i < size; i++){
-      for(int j = 0; j < size; j++){
-	int other = mtx[i][k] + mtx[k][j];
-	if(mtx[i][j] > other){
-	  mtx[i][j] = other;
-	}
-      }
-    }
-  }
 }
 
 
