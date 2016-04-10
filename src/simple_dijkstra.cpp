@@ -63,7 +63,7 @@ public:
 
 
 int size;
-int ** mtx;
+int * mtx;
 
 
 
@@ -91,8 +91,8 @@ void do_Dijkstra(){
             int c=queue.pop();
             
             for (int i=0; i<size; i++) {
-                if (mtx[c][i]<0) continue; //not a neighbour
-                int new_dist=dist[c]+mtx[c][i];
+                if (MATRIX_AT(c,i)<0) continue; //not a neighbour
+                int new_dist=dist[c]+MATRIX_AT(c,i);
                 if (new_dist<dist[i]) {
                     dist[i]=new_dist;
                     queue.update(i, new_dist);
@@ -105,7 +105,7 @@ void do_Dijkstra(){
     //return results to mtx - I need original mtx during whole algorithm, I cannot simply write new values into it
     
     for (int i=0; i<size; i++) {
-        memcpy(mtx[i], dists[i], sizeof(int)*size);
+        memcpy(&(mtx[i*size]), dists[i], sizeof(int)*size);
         delete [] dists[i];
     }
     delete [] dists;

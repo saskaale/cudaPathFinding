@@ -1,5 +1,6 @@
 DEL_FILES = rm -rf
 MKDIR = mkdir -p
+#CC = nvcc
 CC = g++
 
 # Compiler flags:
@@ -10,6 +11,7 @@ CC = g++
 #  -pedantic turns even more compiler warnings ;)
 CFLAGS_COMMON = -Wall -Werror -pedantic -std=c++0x
 CFLAGS_DEBUG = -g $(CFLAGS_COMMON)
+CFLAGS_NVCC = 
 #CFLAGS_RELEASE = -msse -msse2 -msse3 -mfpmath=sse -O3 $(CFLAGS_COMMON)
 #CFLAGS_RELEASE_VERBOSE = -ftree-vectorizer-verbose=5 -fopt-info-vec-missed $(CFLAGS_RELEASE)
 
@@ -28,7 +30,7 @@ SRC_DIR = src
 
 
 
-all: dirs simple_fw simple_dijkstra
+all: dirs simple_fw simple_dijkstra cuda_fw
 
 remake: clean all
 
@@ -37,6 +39,9 @@ matrix_tools.o: $(SRC_DIR)/matrix_tools.cpp  $(SRC_DIR)/matrix_tools.h
 
 simple_fw: matrix_tools.o $(SRC_DIR)/simple_fw.cpp
 		$(CC) -o $(BIN_DIR)/simple_fw $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_fw.cpp $(CFLAGS) $(LIBS)
+
+cuda_fw: matrix_tools.o $(SRC_DIR)/cuda_fw.cpp
+		$(CC) -o $(BIN_DIR)/cuda_fw $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/cuda_fw.cpp $(CFLAGS) $(LIBS)
 
 simple_dijkstra: matrix_tools.o $(SRC_DIR)/simple_dijkstra.cpp
 		$(CC) -o $(BIN_DIR)/simple_dijkstra $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_dijkstra.cpp $(CFLAGS) $(LIBS)

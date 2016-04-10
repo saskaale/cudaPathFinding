@@ -8,12 +8,14 @@
 #include <climits>
 
 
+#define MATRIX_AT(i,j) mtx[(i)*size+(j)]
+#define MATRIX_SIZE() ((size)*(size))
 
-
-void allocMem(int& size, int ** &mtx);
-void emptyMem(int& size, int ** &mtx);
-void load(std::istream& s, int& size, int ** &mtx);
-void dump(std::ostream& os, int& size, int ** &mtx);
+void allocMem(int size, int * &mtx);
+void emptyMem(int size, int * &mtx);
+void load(std::istream& s, int& size, int * &mtx);
+void randomMtx(int wantedSize, int& size, int * &mtx);
+void dump(std::ostream& os, int& size, int * &mtx);
 
 
 

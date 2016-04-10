@@ -8,29 +8,48 @@
 
 using namespace std;
 
-void load(istream& s, int& size, int ** &mtx){ 
+void load(istream& s, int& size, int * &mtx){ 
     cin >> size;
-    
-    allocMem(size, mtx);
 
+    allocMem(size, mtx);
 
     for(int i = 0; i < size; i++){
 	for(int j = 0; j < size; j++){
 	    int dist = 0;
 	    cin >> dist;
-	    mtx[i][j] = dist;
+	    MATRIX_AT(i,j) = dist;
 	}
     }
 }
 
-void dump(ostream& os, int& size, int ** &mtx){
+
+void randomMtx(int wantedSize, int& size, int * &mtx){
+    size = wantedSize;
+    
+    allocMem(size, mtx);
+
+
+
+   time_t t;
+   /* Intializes random number generator */
+   srand((unsigned) time(&t));
+
+    for(int i = 0; i < size; i++){
+	for(int j = 0; j < size; j++){
+	    int dist = rand()%MAXLEN;
+	    MATRIX_AT(i,j) = dist;
+	}
+    }
+}
+
+void dump(ostream& os, int& size, int * &mtx){
   os << size<<endl;
   for(int i = 0; i < size; i++){
       for(int j = 0; j < size; j++){
-	  if(mtx[i][j] >= MAXLEN)
+	  if(MATRIX_AT(i,j) >= MAXLEN)
 	    os << "-1";
 	  else
-	    os << mtx[i][j];
+	    os << MATRIX_AT(i,j);
 	  
 	  os << '\t';
       }
@@ -39,16 +58,10 @@ void dump(ostream& os, int& size, int ** &mtx){
   
 }
 
-void emptyMem(int& size, int ** &mtx){
-    for(int i = 0; i < size; i++){
-      delete[] mtx[i];
-    }
+void emptyMem(int size, int * &mtx){
     delete[] mtx;
 }
 
-void allocMem(int& size, int ** &mtx){
-    mtx = new int*[size];
-    for(int i = 0; i < size; i++){
-      mtx[i] = new int[size];
-    }
+void allocMem(int size, int * &mtx){
+    mtx = new int[size*size];
 }
