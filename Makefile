@@ -30,7 +30,7 @@ SRC_DIR = src
 
 
 
-all: dirs simple_fw simple_dijkstra cuda_fw
+all: dirs simple_fw simple_dijkstra blocked_fw
 
 remake: clean all
 
@@ -40,8 +40,8 @@ matrix_tools.o: $(SRC_DIR)/matrix_tools.cpp  $(SRC_DIR)/matrix_tools.h
 simple_fw: matrix_tools.o $(SRC_DIR)/simple_fw.cpp
 		$(CC) -o $(BIN_DIR)/simple_fw $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_fw.cpp $(CFLAGS) $(LIBS)
 
-cuda_fw: matrix_tools.o $(SRC_DIR)/cuda_fw.cpp
-		$(CC) -o $(BIN_DIR)/cuda_fw $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/cuda_fw.cpp $(CFLAGS) $(LIBS)
+blocked_fw: matrix_tools.o $(SRC_DIR)/blocked_fw.cpp
+		$(CC) -o $(BIN_DIR)/blocked_fw $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/blocked_fw.cpp $(CFLAGS) $(LIBS)
 
 simple_dijkstra: matrix_tools.o $(SRC_DIR)/simple_dijkstra.cpp
 		$(CC) -o $(BIN_DIR)/simple_dijkstra $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_dijkstra.cpp $(CFLAGS) $(LIBS)

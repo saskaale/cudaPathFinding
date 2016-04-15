@@ -7,9 +7,10 @@
 #include <iostream>
 #include <climits>
 
+#define MATRIX_BLOCKSIZE 3
 
-#define MATRIX_AT(i,j) mtx[(i)*size+(j)]
-#define MATRIX_SIZE() ((size)*(size))
+#define MATRIX_AT(i,j) mtx[(i)*(size+MATRIX_BLOCKSIZE)+(j)]
+#define MATRIX_SIZE() ((size+MATRIX_BLOCKSIZE)*(size+MATRIX_BLOCKSIZE))
 
 void allocMem(int size, int * &mtx);
 void emptyMem(int size, int * &mtx);

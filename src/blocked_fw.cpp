@@ -13,7 +13,7 @@
 
 using namespace std;
 
-void do_CudaFW(int& size, int*& mtx);
+void do_BlockedFW(int& size, int*& mtx);
 void do_FW(int& size, int*& mtx);
 
 
@@ -62,7 +62,7 @@ void do_FW(int& size, int*& mtx){
     }
 
 
-void do_CudaFW(int& size, int*& mtx){
+void do_BlockedFW(int& size, int*& mtx){
   //prepare matrix of length
   for(int i = 0; i < size; i++){
     for(int j = 0; j < size; j++){
@@ -85,9 +85,15 @@ void do_CudaFW(int& size, int*& mtx){
 //  cudaMemcpy(md, mtx, MATRIX_SIZE()*sizeof(int), cudaMemcpyHostToDevice);
   
   
-  const int n = size;	//size of matrix
+  int n = size;	//size of matrix
 
-  const int s = 3;	//size of block
+  if(n%MATRIX_BLOCKSIZE != 0){
+    n += MATRIX_BLOCKSIZE - n%MATRIX_BLOCKSIZE;	//align to size of matrix_blocksize
+  }
+
+
+  const int s = MATRIX_BLOCKSIZE;	//size of block
+
   //Floyd Warshall main loop
   for(int b = 0; b < n/s; b++){
     //independent block first
@@ -167,14 +173,17 @@ void runTests(){
 
     //copy it to mtx2
     mtx2_size = mtx1_size;
-    allocMem(100,mtx2);
-    memcpy(mtx2, mtx1, sizeof(int)*mtx1_size*mtx1_size);
+    allocMem(TEST_SIZE,mtx2);
+
+//    cout << "copy "<<(mtx1_size+MATRIX_BLOCKSIZE)*(mtx1_size+MATRIX_BLOCKSIZE)<<endl;
+//    cout << "mtx1_size "<<(mtx1_size)<<endl;
+    memcpy(mtx2, mtx1, sizeof(int)*(mtx1_size+MATRIX_BLOCKSIZE)*(mtx1_size+MATRIX_BLOCKSIZE));
 
 
 
-    cout << "do CUDA"<<endl;
+    cout << "do Blocked" << endl;
     //apply fw cuda on mtx1
-    do_CudaFW(mtx1_size, mtx1);
+    do_BlockedFW(mtx1_size, mtx1);
 
 
     cout << "do SIMPLE"<<endl;
@@ -189,12 +198,12 @@ void runTests(){
     cout << "compare"<<endl;
     //compare results
 
-    int res = memcmp(mtx1, mtx2, sizeof(int)*mtx1_size*mtx1_size);
+    int res = memcmp(mtx1, mtx2, sizeof(int)*(mtx1_size+MATRIX_BLOCKSIZE)*(mtx1_size+MATRIX_BLOCKSIZE));
     cout << "Tests: "<<res<<endl;
     
     emptyMem(mtx2_size,mtx2);
     emptyMem(mtx1_size,mtx1);
-    emptyMem(size, mtx);
+//    emptyMem(size, mtx);
 }
 
 
@@ -205,7 +214,7 @@ int main(){
 
     randomMtx(100,size, mtx);
 
-    do_CudaFW(size, mtx);
+    do_BlockedFW(size, mtx);
 
     dump(cout, size, mtx);
     

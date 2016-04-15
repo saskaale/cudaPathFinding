@@ -25,7 +25,7 @@ void load(istream& s, int& size, int * &mtx){
 
 void randomMtx(int wantedSize, int& size, int * &mtx){
     size = wantedSize;
-    
+
     allocMem(size, mtx);
 
 
@@ -63,5 +63,8 @@ void emptyMem(int size, int * &mtx){
 }
 
 void allocMem(int size, int * &mtx){
-    mtx = new int[size*size];
+    int s = MATRIX_SIZE();
+    mtx = new int[s];
+    for(int i = 0; i < s; i++)
+	mtx[i] = MAXLEN;
 }
