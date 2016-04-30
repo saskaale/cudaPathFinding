@@ -1,7 +1,7 @@
 DEL_FILES = rm -rf
 MKDIR = mkdir -p
-#CC = nvcc
 CC = g++
+NVCC = nvcc
 
 # Compiler flags:
 #  -std=c99  C99 standard
@@ -30,7 +30,7 @@ SRC_DIR = src
 
 
 
-all: dirs simple_fw simple_dijkstra blocked_fw
+all: dirs simple_fw simple_dijkstra simple_dijkstra_cuda blocked_fw
 
 remake: clean all
 
@@ -45,6 +45,9 @@ blocked_fw: matrix_tools.o $(SRC_DIR)/blocked_fw.cpp
 
 simple_dijkstra: matrix_tools.o $(SRC_DIR)/simple_dijkstra.cpp
 		$(CC) -o $(BIN_DIR)/simple_dijkstra $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_dijkstra.cpp $(CFLAGS) $(LIBS)
+
+simple_dijkstra_cuda: matrix_tools.o $(SRC_DIR)/simple_dijkstra.cu
+		$(NVCC) -o $(BIN_DIR)/simple_dijkstra_cuda $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_dijkstra.cu $(CFLAGS_NVCC) $(LIBS)
 
 clean:
 	$(DEL_FILES) $(BIN_DIR) $(OBJECTSDIR)
