@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <climits>
-#include <sys/time.h>
 
 //#include <cuda_runtime_api.h>
 //#include <cuda.h>
@@ -54,8 +53,6 @@ void do_FW(int& size, int*& mtx){
 }
 
 
-#define HANDLE_ERROR(err) (HandleError((err), __FILE__, __LINE__))
-
 #define SOLVE_IJK(i,j,k) \
     int other = MATRIX_AT(i,k) + MATRIX_AT(k,j); \
     if(MATRIX_AT(i,j) > other){ \
@@ -64,7 +61,6 @@ void do_FW(int& size, int*& mtx){
 
 
 void do_BlockedFW(int& size, int*& mtx){
-  cout << "size "<<size<<endl;
   //prepare matrix of length
   for(int i = 0; i < size; i++){
     for(int j = 0; j < size; j++){
@@ -102,7 +98,6 @@ void do_BlockedFW(int& size, int*& mtx){
     for(int k = b*s; k < (b+1)*s; k++){
 	for(int i = b*s; i < (b+1)*s; i++){
 	    for(int j = b*s; j < (b+1)*s; j++){
-//                 if (b==0) cout << "0: trying path from "<<i<<" to "<<j<<" via "<<i<<"->"<<k<<" + "<<k<<"->"<<j<<endl;
 		SOLVE_IJK(i,j,k);
 	    }
 	}
@@ -114,9 +109,9 @@ void do_BlockedFW(int& size, int*& mtx){
 	    for(int i = b*s; i < (b+1)*s; i++){
 		for(int j = ib*s; j < (ib+1)*s; j++){
 		    if(i >= size || j >= size || k >= size){
+//			cout << "1: "<<i<<","<<j<<","<<k<<endl;
 			continue;
 		    }
-//                     if (b==0) cout << "1: trying path from "<<i<<" to "<<j<<" via "<<i<<"->"<<k<<" + "<<k<<"->"<<j<<endl;
 		    SOLVE_IJK(i,j,k);
 		}
 	    }
@@ -129,9 +124,9 @@ void do_BlockedFW(int& size, int*& mtx){
 	    for(int i = jb*s; i < (jb+1)*s; i++){
 		for(int j = b*s; j < (b+1)*s; j++){
 		    if(i >= size || j >= size || k >= size){
+//			cout << "2: "<<i<<","<<j<<","<<k<<endl;
 			continue;
 		    }
-//                     if (b==0) cout << "2: trying path from "<<i<<" to "<<j<<" via "<<i<<"->"<<k<<" + "<<k<<"->"<<j<<endl;
 		    SOLVE_IJK(i,j,k);
 		}
 	    }
@@ -145,9 +140,9 @@ void do_BlockedFW(int& size, int*& mtx){
 		for(int j = ib*s; j < (ib+1)*s; j++){
 		    for(int k = b*s; k < (b+1)*s; k++){
 			if(i >= size || j >= size || k >= size){
+//			    cout << "3: "<<i<<","<<j<<","<<k<<endl;
 			    continue;
 			}
-//                         if (b==0) cout << "3: trying path from "<<i<<" to "<<j<<" via "<<i<<"->"<<k<<" + "<<k<<"->"<<j<<endl;
 			SOLVE_IJK(i,j,k);
 		    }
 		}
@@ -161,12 +156,6 @@ void do_BlockedFW(int& size, int*& mtx){
 //  cudaFree(md);
 }
 
-long microtime(){
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    return ((unsigned long long)time.tv_sec * 1000000) + time.tv_usec;
-}
-
 
 
 void runTests(){
@@ -175,7 +164,7 @@ void runTests(){
     int* mtx2;
     int mtx2_size;
 
-    const int TEST_SIZE = 900;
+    const int TEST_SIZE = 101;
 
     //prepare mtx1
     randomMtx(TEST_SIZE,mtx1_size, mtx1);
@@ -192,20 +181,12 @@ void runTests(){
 
     cout << "do Blocked" << endl;
     //apply fw cuda on mtx1
-    
-    long time1=microtime();
     do_BlockedFW(mtx1_size, mtx1);
-    long time2=microtime();
-    
-    cout << "...took "<<(time2-time1)<<" mseconds"<<endl;
 
 
     cout << "do SIMPLE"<<endl;
     //apply fw on mtx2
-    long time3=microtime();
     do_FW(mtx2_size, mtx2);
-    long time4=microtime();
-    cout << "...took "<<(time4-time3)<<" mseconds"<<endl;
 
 
 //    dump(cout, mtx1_size, mtx1);
