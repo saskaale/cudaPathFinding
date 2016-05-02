@@ -237,12 +237,12 @@ void do_BlockedFW(int& size, int*& mtx){
   
 
 
-  int* mx_gpu;
+  int* mtx_gpu;
 
   cout << "CUDA alloc"<<endl;
 
   //copy matrix to cuda
-  HANDLE_ERROR( cudaMalloc(&mtx_gpu,MATRIX_SIZE()) );
+  HANDLE_ERROR( cudaMalloc((void**)&mtx_gpu,MATRIX_SIZE()*sizeof(int)) );
 
 
   cout << "COPY TO CUDA"<<endl;
@@ -275,17 +275,17 @@ void do_BlockedFW(int& size, int*& mtx){
     cout << "Block: " << b <<endl;
 
     //independent block first
-    kernel_phase1<<<1, dimBlockP1>>>(b,s,md,size);
+    kernel_phase1<<<1, dimBlockP1>>>(b,s,mtx_gpu,size);
 
-    kernel_phase2<<<dimGridP2, dimBlockP2>>>(b, s, md, size);
+    kernel_phase2<<<dimGridP2, dimBlockP2>>>(b, s, mtx_gpu, size);
 
     //most blocks are doubly dependent. Notice that k is now innermost
-    kernel_phase3<<<dimGridP3, dimBlockP3>>>(b,s,md,size);
+    kernel_phase3<<<dimGridP3, dimBlockP3>>>(b,s,mtx_gpu,size);
   }
 
 
-  cudaMemcpy(mtx, md, MATRIX_SIZE()*sizeof(int), cudaMemcpyDeviceToHost);
-  cudaFree(md);
+  HANDLE_ERROR( cudaMemcpy(mtx, mtx_gpu, MATRIX_SIZE()*sizeof(int), cudaMemcpyDeviceToHost) );
+  HANDLE_ERROR( cudaFree(mtx_gpu) );
 }
 
 
