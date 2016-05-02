@@ -6,6 +6,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <climits>
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
 
 #define MATRIX_BLOCKSIZE 3
 
@@ -18,6 +21,10 @@ void load(std::istream& s, int& size, int * &mtx);
 void randomMtx(int wantedSize, int& size, int * &mtx);
 void dump(std::ostream& os, int& size, int * &mtx);
 
+static void HandleError( cudaError_t err, const char* file, int line);
+
+
+#define HANDLE_ERROR(err) (HandleError((err), __FILE__, __LINE__))
 
 
 
