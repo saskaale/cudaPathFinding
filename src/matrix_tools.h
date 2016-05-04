@@ -7,7 +7,9 @@
 #include <iostream>
 #include <climits>
 
-#define MATRIX_BLOCKSIZE 3
+#ifndef MATRIX_BLOCKSIZE
+#define MATRIX_BLOCKSIZE 8
+#endif
 
 #define MATRIX_AT(i,j) mtx[(i)*(size+MATRIX_BLOCKSIZE)+(j)]
 #define MATRIX_SIZE() ((size+MATRIX_BLOCKSIZE)*(size+MATRIX_BLOCKSIZE))

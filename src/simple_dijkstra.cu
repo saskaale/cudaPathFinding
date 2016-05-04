@@ -3,6 +3,7 @@
 #include <iostream>
 #include <climits>
 #include <string.h>
+#include <fstream>
 
 #include "matrix_tools.h"
 
@@ -21,8 +22,8 @@ private:
         int id;
         int pri;
     };
-    heap_item * m_arr;
     int count;
+    heap_item * m_arr;
 public:
     __host__ __device__ priority_queue(int cnt){
         m_arr=new heap_item[cnt];
@@ -60,19 +61,18 @@ public:
     }
 };
 
-
+#define MTX_AT(i, j) mtx[i*size+j]
 
 int size;
 int * mtx;
 
 __global__
-void DijkstraCuda(int * mtx, int * dists, int size){
+void DijkstraCuda(int * mtx, int * dists_gpu, int size){
     int source=threadIdx.x;
     priority_queue queue(size);
     
     //not very nice - distances are also in priority_queue
-    int *dist=dists+size*source;
-    //dists[source]=dist;
+    int *dist=dists_gpu+size*source;
     for (int i=0; i<size; i++) dist[i]=INT_MAX;
     
     queue.update(source, 0);
@@ -138,26 +138,40 @@ void do_Dijkstra(){
 
 #define USE_CUDA 1
 int main(){
-    load(cin, size, mtx);
+    //load(cin, size, mtx);
+    randomMtx(1000, size, mtx);
+    //int * mtx_backup=new int[MATRIX_SIZE()];
+    //memcpy(mtx_backup, mtx, MATRIX_SIZE()*sizeof(int));
     
+    //dump(cout, size, mtx);
 #if USE_CUDA
     int * mtx_gpu;
     int * dists_gpu;
     int dev_count;
     cudaGetDeviceCount(&dev_count);
-    printf("%d CUDA devices\n", dev_count);
-    cudaMalloc(&mtx_gpu, size*size*sizeof(int));
-    cudaMemcpy(mtx_gpu, mtx, size*size*sizeof(int), cudaMemcpyHostToDevice);
-    cudaMalloc(&dists_gpu, size*sizeof(int));
+    cudaMalloc(&mtx_gpu, MATRIX_SIZE()*sizeof(int));
+    cudaMemcpy(mtx_gpu, mtx, MATRIX_SIZE()*sizeof(int), cudaMemcpyHostToDevice);
+    cudaMalloc(&dists_gpu, MATRIX_SIZE()*sizeof(int));
     DijkstraCuda<<<1, size>>>(mtx_gpu, dists_gpu, size);
-    cudaMemcpy(mtx, dists_gpu, size*sizeof(int), cudaMemcpyDeviceToHost);
+    cudaDeviceSynchronize();
+    cudaMemcpy(mtx, dists_gpu, MATRIX_SIZE()*sizeof(int), cudaMemcpyDeviceToHost);
     cudaFree(mtx_gpu);
     cudaFree(dists_gpu);
 #else /*USE_CUDA*/
     do_Dijkstra();
 #endif /*USE_CUDA*/
-    
-    dump(cout, size, mtx);
+    ofstream f1("dijkstra_cuda.txt");
+    dump(f1, size, mtx);
+    f1.close();
+
+    /*delete [] mtx;
+    mtx=mtx_backup;
+
+    do_Dijkstra();
+    ofstream f2("dijkstra.txt");
+    dump(f2, size, mtx);
+    f2.close();*/
+    //printf("mtx size %d\n", size);
     
     emptyMem(size, mtx);
 }

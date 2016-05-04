@@ -65,9 +65,6 @@ public:
 int size;
 int * mtx;
 
-
-
-
 void do_Dijkstra(){
     
     int ** dists=new int*[size];
@@ -112,13 +109,14 @@ void do_Dijkstra(){
   
 }
 
-
 int main(){
-    load(cin, size, mtx);
+    //load(cin, size, mtx);
+    randomMtx(1000, size, mtx);
     
     do_Dijkstra();
     
-    dump(cout, size, mtx);
+    //dump(cout, size, mtx);
+    //printf("mtx size %d\n", size);
     
     emptyMem(size, mtx);
 }
