@@ -71,8 +71,9 @@ void emptyMem(int size, int * &mtx){
 
 void allocMem(int size, int * &mtx){
     int s = MATRIX_SIZE();
-//    mtx = new int[s];
-    HANDLE_ERROR( cudaHostAlloc((void**)&mtx, s*sizeof(int), cudaHostAllocDefault) );
+    cout << "allocMem "<<s<<endl;
+    mtx = new int[s];
+//    HANDLE_ERROR( cudaHostAlloc((void**)&mtx, s*sizeof(int), cudaHostAllocDefault) );
     for(int i = 0; i < s; i++)
 	mtx[i] = MAXLEN;
 }

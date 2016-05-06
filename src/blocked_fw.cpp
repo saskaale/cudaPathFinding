@@ -53,6 +53,8 @@ void do_FW(int& size, int*& mtx){
 }
 
 
+#define HANDLE_ERROR(err) (HandleError((err), __FILE__, __LINE__))
+
 #define SOLVE_IJK(i,j,k) \
     int other = MATRIX_AT(i,k) + MATRIX_AT(k,j); \
     if(MATRIX_AT(i,j) > other){ \
@@ -164,7 +166,7 @@ void runTests(){
     int* mtx2;
     int mtx2_size;
 
-    const int TEST_SIZE = 101;
+    const int TEST_SIZE = 7;
 
     //prepare mtx1
     randomMtx(TEST_SIZE,mtx1_size, mtx1);
@@ -205,16 +207,19 @@ void runTests(){
 }
 
 
-int main(){
-    runTests();
-    return 0;
+int main(int argc, char* argv[]){
+//    runTests();
+//    return 0;
 //    load(cin, size, mtx);
+//    cout << "Zadej velikost matice"<<endl;
 
-    randomMtx(100,size, mtx);
+    int s = atoi(argv[1]);
+//    cin >> s;
+    randomMtx(s,size, mtx);
 
     do_BlockedFW(size, mtx);
 
-    dump(cout, size, mtx);
-    
+//    dump(cout, size, mtx);
+
     emptyMem(size, mtx);
 }

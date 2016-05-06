@@ -14,8 +14,11 @@
 #define MATRIX_BLOCKSIZE 8
 #endif
 
-#define MATRIX_AT(i,j) mtx[(i)*(size+MATRIX_BLOCKSIZE)+(j)]
-#define MATRIX_SIZE() ((size+MATRIX_BLOCKSIZE)*(size+MATRIX_BLOCKSIZE))
+//#define MATRIX_AT(i,j) mtx[(i)*(size+MATRIX_BLOCKSIZE)+(j)]
+//#define MATRIX_SIZE() ((size+MATRIX_BLOCKSIZE)*(size+MATRIX_BLOCKSIZE))
+
+#define MATRIX_AT(i,j) mtx[(i)*(size)+(j)]
+#define MATRIX_SIZE() ((size)*(size))
 
 void allocMem(int size, int * &mtx);
 void emptyMem(int size, int * &mtx);
