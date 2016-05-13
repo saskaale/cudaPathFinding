@@ -8,12 +8,12 @@
 
 using namespace std;
 
-static void HandleError( cudaError_t err, const char* file, int line) {
-    if( err != cudaSuccess){
-        printf("%s in %s at line %d\n", cudaGetErrorString(err), file, line);
-        exit(EXIT_FAILURE);
-    }
-}
+// static void HandleError( cudaError_t err, const char* file, int line) {
+//     if( err != cudaSuccess){
+//         printf("%s in %s at line %d\n", cudaGetErrorString(err), file, line);
+//         exit(EXIT_FAILURE);
+//     }
+// }
 
 void load(istream& s, int& size, int * &mtx){ 
     cin >> size;
@@ -71,7 +71,6 @@ void emptyMem(int size, int * &mtx){
 
 void allocMem(int size, int * &mtx){
     int s = MATRIX_SIZE();
-    cout << "allocMem "<<s<<endl;
     mtx = new int[s];
 //    HANDLE_ERROR( cudaHostAlloc((void**)&mtx, s*sizeof(int), cudaHostAllocDefault) );
     for(int i = 0; i < s; i++)
