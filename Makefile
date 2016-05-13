@@ -46,13 +46,13 @@ simple_fw: matrix_tools.o $(SRC_DIR)/simple_fw.cpp
 blocked_fw: matrix_tools.o $(SRC_DIR)/blocked_fw.cpp
 		$(CC) -o $(BIN_DIR)/blocked_fw $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/blocked_fw.cpp $(CFLAGS) $(LIBS)
 
-blocked_fw_cuda: matrix_tools.o $(SRC_DIR)/blocked_fw.cu
+blocked_fw_cuda: matrix_tools.o $(SRC_DIR)/cuda.hpp $(SRC_DIR)/blocked_fw.cu
 		$(NVCC) -o $(BIN_DIR)/blocked_fw_cuda $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/blocked_fw.cu $(CFLAGS_NVCC) $(LIBS)
 
 simple_dijkstra: matrix_tools.o $(SRC_DIR)/priority_queue.hpp $(SRC_DIR)/simple_dijkstra.cpp
 		$(CC) -o $(BIN_DIR)/simple_dijkstra $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_dijkstra.cpp $(CFLAGS) $(LIBS)
 
-simple_dijkstra_cuda: matrix_tools.o $(SRC_DIR)/priority_queue.hpp $(SRC_DIR)/simple_dijkstra.cu
+simple_dijkstra_cuda: matrix_tools.o $(SRC_DIR)/priority_queue.hpp $(SRC_DIR)/cuda.hpp $(SRC_DIR)/simple_dijkstra.cu
 		$(NVCC) -o $(BIN_DIR)/simple_dijkstra_cuda $(OBJECTSDIR)/matrix_tools.o ./$(SRC_DIR)/simple_dijkstra.cu $(CFLAGS_NVCC) $(LIBS)
 
 clean:

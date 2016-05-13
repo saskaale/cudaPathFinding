@@ -10,6 +10,8 @@
 #include <cuda_runtime.h>
 #include <cuda.h>
 
+#include "cuda.hpp"
+
 #ifndef __CUDACC__  
     #define __CUDACC__
 #endif
@@ -59,16 +61,6 @@ void do_FW(int size, int* mtx){
     }
   }
 }
-
-
-static void HandleError( cudaError_t err, const char* file, int line) {
-    if( err != cudaSuccess){
-	printf("%s in %s at line %d\n", cudaGetErrorString(err), file, line);
-	exit(EXIT_FAILURE);
-    }
-}
-
-#define HANDLE_ERROR(err) (HandleError((err), __FILE__, __LINE__))
 
 #define SOLVE_IJK(i,j,k) \
     int other = MATRIX_AT(i,k) + MATRIX_AT(k,j); \

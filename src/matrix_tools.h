@@ -6,9 +6,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <climits>
-// #include <cuda.h>
-// #include <cuda_runtime.h>
-// #include <cuda_runtime_api.h>
+
 
 #ifndef MATRIX_BLOCKSIZE
 #define MATRIX_BLOCKSIZE 8
@@ -25,17 +23,6 @@ void emptyMem(int size, int * &mtx);
 void load(std::istream& s, int& size, int * &mtx);
 void randomMtx(int wantedSize, int& size, int * &mtx);
 void dump(std::ostream& os, int& size, int * &mtx);
-
-// static void HandleError( cudaError_t err, const char* file, int line);
-
-
-// #define HANDLE_ERROR(err) (HandleError((err), __FILE__, __LINE__))
-
-
-
-
-
-
 
 const int MAXLEN = INT_MAX/3;
 

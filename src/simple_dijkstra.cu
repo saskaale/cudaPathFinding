@@ -7,6 +7,7 @@
 
 #include "matrix_tools.h"
 #include "priority_queue.hpp"
+#include "cuda.hpp"
 
 using namespace std;
 
@@ -61,10 +62,12 @@ int main(int argc, char ** argv){
     cudaMalloc(&dists_gpu, MATRIX_SIZE()*sizeof(int));
     for (int block=0; block<size/BURST_SIZE; block++) {
         DijkstraCuda<<<1, BURST_SIZE>>>(mtx_gpu, dists_gpu, size, block*BURST_SIZE);
+        HANDLE_ERROR(cudaGetLastError());
         cudaDeviceSynchronize();
     }
     if (size%BURST_SIZE!=0){
         DijkstraCuda<<<1, size%BURST_SIZE>>>(mtx_gpu, dists_gpu, size, size-(size%BURST_SIZE));
+        HANDLE_ERROR(cudaGetLastError());
     }
     cudaDeviceSynchronize();
     cudaMemcpy(mtx, dists_gpu, MATRIX_SIZE()*sizeof(int), cudaMemcpyDeviceToHost);
