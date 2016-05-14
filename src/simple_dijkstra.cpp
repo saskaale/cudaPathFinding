@@ -25,7 +25,6 @@ void do_Dijkstra(){
     
         priority_queue queue(size);
         
-        //not very nice - distances are also in priority_queue
         int *dist=new int[size];
         dists[source]=dist;
         

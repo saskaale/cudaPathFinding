@@ -11,7 +11,7 @@ NVCC = nvcc
 #  -pedantic turns even more compiler warnings ;)
 CFLAGS_COMMON = -Wall -pedantic -std=c++0x
 CFLAGS_DEBUG = -g $(CFLAGS_COMMON)
-CFLAGS_NVCC = 
+CFLAGS_NVCC = -G
 #CFLAGS_RELEASE = -msse -msse2 -msse3 -mfpmath=sse -O3 $(CFLAGS_COMMON)
 #CFLAGS_RELEASE_VERBOSE = -ftree-vectorizer-verbose=5 -fopt-info-vec-missed $(CFLAGS_RELEASE)
 

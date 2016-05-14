@@ -7,6 +7,8 @@
 #define HOST_AND_DEVICE
 #endif /*__NVCC__*/
 
+#define HEAP_SIZE(cnt) (3*sizeof(int)*cnt)
+
 //not general priority queue, specialized for this case (some operations may not cover all options)
 class priority_queue{
 private:
@@ -17,6 +19,7 @@ private:
     heap_item * m_arr;
     int * m_pos;
     int count;
+    bool m_allocated;
     HOST_AND_DEVICE void swap_heap(int p1, int p2){
         heap_item tmp;
         memcpy(&tmp, &m_arr[p1], sizeof(heap_item));
@@ -44,31 +47,43 @@ private:
         while (m_arr[parent(p)].pri > m_arr[p].pri){
             swap_heap(parent(p), p);
             p=parent(p);
-//             if (!p) return;
+            if (p) return;
         }
     }
     HOST_AND_DEVICE void heapify(int p){
         int minp;
-        if (left_child(p)<count && (m_arr[left_child(p)].pri < m_arr[p].pri)) minp=left_child(p);
+   h_s: if (left_child(p)<count && (m_arr[left_child(p)].pri < m_arr[p].pri)) minp=left_child(p);
         else minp=p;
         if (right_child(p)<count && (m_arr[right_child(p)].pri < m_arr[minp].pri)) minp=right_child(p);
         if (minp!=p) {
             swap_heap(p, minp);
-            heapify(minp);
+	    p=minp;
+	    goto h_s;
+            //heapify(minp);
         }
     }
 public:
-    HOST_AND_DEVICE priority_queue(int cnt){
-        m_arr=new heap_item[cnt];
-        m_pos=new int[cnt];
+    HOST_AND_DEVICE priority_queue(int cnt, void * mem_pool=NULL){
+        if (!mem_pool){
+            m_arr=new heap_item[cnt];
+            m_pos=new int[cnt];
+            m_allocated=true;
+        } else {
+            m_arr=(heap_item*)mem_pool;
+            m_pos=(int*)(((char*)mem_pool)+sizeof(heap_item)*cnt);
+            m_allocated=false;
+        }
         count=cnt;
         for (int i=0; i<count; i++) {
             m_arr[i].id=i;
             m_arr[i].pri=INT_MAX;
+        }
+	for (int i=0; i<count; i++) {
             m_pos[i]=i;
         }
     }
     HOST_AND_DEVICE ~priority_queue(){
+    	if (!m_allocated) return;
         delete [] m_arr;
         delete [] m_pos;
     }

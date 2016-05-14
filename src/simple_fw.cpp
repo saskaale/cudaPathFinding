@@ -50,8 +50,9 @@ void do_FW(){
 }
 
 
-int main(){
-    load(cin, size, mtx);
+int main(int argc, char ** argv){
+    randomMtx(atoi(argv[1]), size, mtx);
+    //load(cin, size, mtx);
     
     do_FW();
     
