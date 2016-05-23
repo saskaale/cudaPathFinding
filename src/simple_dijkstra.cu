@@ -22,9 +22,7 @@ void DijkstraCuda(int * mtx, int * dists_gpu, int size, void * heap_mem_pool, in
     //printf("source %d (%d %d), size %d\n", source, blockIdx.x, threadIdx.x, size);
     if (source>=size) return;
     void * heap_mem=((char*)heap_mem_pool)+HEAP_SIZE(size)*source;
-    if (source==0) printf("alloc started\n");
     priority_queue queue(size, heap_mem);
-    if (source==0) printf("alloc ended\n");
     
     int *dist=dists_gpu+size*source;
     queue.update(source, 0);
@@ -54,10 +52,6 @@ void DijkstraCuda(int * mtx, int * dists_gpu, int size, void * heap_mem_pool, in
 int main(int argc, char ** argv){
     if (argc<2) load(cin, size, mtx);
     else randomMtx(atoi(argv[1]), size, mtx);
-    //int * mtx_backup=new int[MATRIX_SIZE()];
-    //memcpy(mtx_backup, mtx, MATRIX_SIZE()*sizeof(int));
-    
-    //dump(cout, size, mtx);
 #if USE_CUDA
     int * mtx_gpu;
     int * dists_gpu;
@@ -73,19 +67,6 @@ int main(int argc, char ** argv){
     printf("starting kernel with %d blocks of %d threads\n", block_cnt, BURST_SIZE);
     cudaFuncSetCacheConfig(DijkstraCuda, cudaFuncCachePreferL1);
     DijkstraCuda<<<block_cnt, BURST_SIZE>>>(mtx_gpu, dists_gpu, size, heap_pool_gpu, 0);
-    //DijkstraCuda<<<1, size>>>(mtx_gpu, dists_gpu, size, heap_pool_gpu, 0);
-    /*for (int block=0; block<size/BURST_SIZE; block++) {
-    	printf("running %d kernels starting from %d\n", BURST_SIZE, block*BURST_SIZE);
-        DijkstraCuda<<<1, BURST_SIZE>>>(mtx_gpu, dists_gpu, size, block*BURST_SIZE);
-        HANDLE_ERROR(cudaGetLastError());
-        cudaDeviceSynchronize();
-    }
-    if (size%BURST_SIZE!=0){
-        printf("... and %d more kernel starting from %d\n", size%BURST_SIZE, size-(size%BURST_SIZE));
-        DijkstraCuda<<<1, size%BURST_SIZE>>>(mtx_gpu, dists_gpu, size, size-(size%BURST_SIZE));
-        HANDLE_ERROR(cudaGetLastError());
-    }*/
-    //DijkstraCuda<<<size, 1>>>(mtx_gpu, dists_gpu, size, 0);
     cudaDeviceSynchronize();
     cudaFree(heap_pool_gpu);
     HANDLE_ERROR(cudaGetLastError());
@@ -95,20 +76,6 @@ int main(int argc, char ** argv){
 #else /*USE_CUDA*/
     do_Dijkstra();
 #endif /*USE_CUDA*/
-//     ofstream f1("dijkstra_cuda.txt");
-//     dump(f1, size, mtx);
-//     f1.close();
-
-    /*delete [] mtx;
-    mtx=mtx_backup;
-
-    do_Dijkstra();
-    ofstream f2("dijkstra.txt");
-    dump(f2, size, mtx);
-    f2.close();*/
-    //printf("mtx size %d\n", size);
-    
-//     dump(cout, size, mtx);
     
     emptyMem(size, mtx);
 }
